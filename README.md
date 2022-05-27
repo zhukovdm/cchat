@@ -5,12 +5,15 @@ in `C/C++`.
 
 # Dependencies
 
-The project employs `C++` standard library, POSIX sockets and `ncurses.h`
-library for GUI running on a client implying the source code is intentionally
-**platform dependent**.
+The project employs `C++` standard library, BSD sockets and `ncurses.h`
+library for client GUI implying the source code is intentionally
+**platform dependent**. The application has been tested on a machine with:
 
-Application has been tested on a machine with installed `linux kernel 5.15.0-27-generic`,
-`g++ 11.2.0`, `ncurses 6.3-2` and `doxygen 1.9.1`.
+- `xubuntu-22.04`,
+- `linux kernel 5.15.0-27-generic`,
+- `g++ 11.2.0`,
+- `ncurses 6.3-2`,
+- `doxygen 1.9.1`.
 
 # Build and run
 
@@ -26,17 +29,19 @@ running client or server.
 ./build/cchat-client --name=user --host=127.0.0.1 --port=12321
 ```
 
-The previous commands should be entered in order. If client starts first,
-it fails on unsuccessful **connect** and terminates. All argument parameters
-are verified, malformed parameters are reported causing program to stop.
+If client starts before server instance, the program fails on unsuccessful
+connect and terminates. All argument parameters are verified, malformed
+parameters are reported via exception causing program to stop.
 
-`cchat-*` executables are copied to the `/usr/bin/` folder upon
-`make install`, but `root` permissions are required. Once installed,
-programs are available in the `$PATH`.
+Run `make install` to copy `cchat-*` executables into `/usr/bin/` folder.
+This makes programs available in the `$PATH`. Note, that copying may require
+`root` permissions.
 
 # Documentation
 
-[Users' Guide](./docs/USER.md) with typical use cases and
-[Programmers' Manual](./docs/PROG.md) with technical details can be found
-in `docs/` folder. **Doxymentation** is generated upon running `make docs`,
-then see `docs/doxygen/html/index.html`.
+[Users' Guide](./docs/user.md) with typical use cases and
+[Programmers' Manual](./docs/prog.md) with technical details can be found
+in `docs/` folder.
+
+Run `make docs` to generate doxymentation into `docs/doxygen/` folder,
+then consult `docs/doxygen/html/index.html`.

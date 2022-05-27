@@ -1,6 +1,5 @@
 # Programmers' Manual
 
-- [Programmers' Manual](#programmers-manual)
 - [Introduction](#introduction)
 - [Definitions](#definitions)
 - [Architecture](#architecture)
@@ -16,43 +15,43 @@
 
 # Introduction
 
-`cchat` is a terminal-based network application for instant messaging.
-It implements classical client-server architecture. All messages are passed
-through the server and later distributed to the target users.
+This document defines important terms used throughout the project and enlighten technical details about implementation of both `client` and `server`.
 
-More on architecture and technical details are in the following chapters.
+All messages are passed through the server and later distributed to the
+target users.
 
 # Definitions
 
-**Network interface** is a point of interconnection between a computer
-and a private or public network. Such point could be a network interface
+`Network interface` is a point of interconnection between a computer and
+a private or public network. Such point could be a network interface
 controller (physical card) or could have a purely software nature (loopback).
 
-**IP address** is a network interface identifier, 32-bit long for **IPv4** and
-128-bit long for **IPv6**. Currently, `cchat` supports only **IPv4**.
+`IP address` is a node identifier within the network, 32-bit long for `IPv4`
+and 128-bit long for `IPv6`. Currently, `cchat` supports only `IPv4`.
 
-**Port number** is a 16-bit (1...65535) local connection identifier.
+`Port number` is a 16-bit (1...65535) local connection identifier.
 0 is a symbol for any currently available port.
 
-**Socket** is a special system entity intended to make possible communication.
+`Socket` is a special system entity intended to make communication possible.
 Sockets are identified by per-process file descriptors. `cchat` uses reliable
-TCP sockets to avoid message losses.
+`TCP` sockets to avoid message losses.
 
-**Network byte order** is a byte order, in which word bytes are transmitted
+`Network byte order` is a byte order, in which word bytes are transmitted
 over network communication. Standard TCP/IP byte order is big-endian. Consider
 the 32-bit word `0x12345678` starting at address `a0`. Big-endian means mapping
 `{ (12, a0), (34, a1), (56, a2), (78, a3) }` and little-endian means mapping
 `{ (78, a0), (56, a1), (34, a2), (12, a3) }`.
 
-**Host byte order** is a byte order, in which word bytes are stored on
+`Host byte order` is a byte order, in which word bytes are stored locally on
 a particular computer or server. It could be either little-endian or big-endian.
 Therefore, words transmitted over the network shall be decorated by `htons()`,
 `htonl()`, `ntohs()`, `ntohl()` function calls from `arpa/inet.h` header.
 
-**Packet** has a header and a body, see [Network protocol](#network-protocol)
+`Packet` is application-specific, basic unit of communication between client
+and server consisting of a header and a body, see [Network protocol](#network-protocol)
 for more details.
 
-**End-of-sequence symbol** is the char `$`.
+`End-of-sequence symbol` is the char `$`.
 
 # Architecture
 
@@ -179,6 +178,8 @@ State is changed back to `command`.
 The following extensions are planned to be done in the future.
 
 - Extensive unit tests with client and server mocking.
+- Different approach to handle incoming connections using `poll` and `select`.
+  Creating separate thread does not scale well.
 - Broken connection detection on both client and server.
 - Server stores messages in the database.
 - User password authentication.

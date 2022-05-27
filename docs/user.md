@@ -1,7 +1,6 @@
 # Users' Guide
 
-- [Users' Guide](#users-guide)
-- [Overview](#overview)
+- [Introduction](#introduction)
 - [Definitions](#definitions)
 - [Server](#server)
 - [Client](#client)
@@ -9,7 +8,7 @@
   - [Command](#command)
   - [Chat](#chat)
 
-# Overview
+# Introduction
 
 This document defines important terms used throughout the project and shows
 typical use cases of both `client` and `server` from user perspective.
@@ -22,17 +21,18 @@ characters.
 `command` is an interpretable sequence of characters issued by the user
 while being in `command` state.
 
+`end-of-chat sequence` is the string `<$>`.
+
 `text message` is any sequence of 1-byte long characters, which is not equal
 to `end-of-chat` sequence issued by the user while being in `chat` state.
 
-`end-of-chat sequence` is the string `<$>`.
-
 `pending message` is a message sent by **u1** to **u2** while being in
 `chat` state. The message had reached the server and had been stored. Target
-**u2** has not visited **u2 -> u1** chat yet.
+**u2** has not visited chat with **u1** yet.
 
 `history message` is a message sent by **u1** to **u2**. The message had
-reached target **u2** in `chat` state and had been stored in the archive.
+reached target **u2** in `chat` state and had been stored in the server
+archive structure.
 
 # Server
 
@@ -55,7 +55,7 @@ Closing connection with peer 2.0.165.84 port 42324.
 # Client
 
 In this chapter, we discuss interaction between the user and `cchat-client`
-program.
+program. If the server stops, all `history` and `pending` messages are lost.
 
 ## Log in
 
@@ -64,9 +64,8 @@ in arguments. Malformed arguments or inacessible server are reported and
 program terminates. If user is already online, login attempt will be rejected
 by the server.
 
-After client has established connection with the server, graphical interface
-appear in the terminal with the following layout. It means both client and
-server are in `command` state.
+After the client has established connection with a server, graphical interface
+appears in the terminal with the following layout.
 
 ```console
 > _
@@ -78,19 +77,15 @@ cchat as user
 `server` is waiting for `client` input and `client` is waiting for user input.
 The following set of commands is available.
 
-`help` shows all available commands with short description.
-
-`pend` requests list of users with **pending messages** sent to the current user.
-
-`hist # user` requests up to **10** last **history messages** with particular `user`.
-
-`chat user` initiates chat with a (even non-existent) `user`. All sent messages
-are stored in a storage with `pending` messages and stored in a history once
-delivered to the target `user`. Once issued, both client and server sessions
-proceed to the `chat` state.
-
-`quit` exits the program, connection is closed on both sides and resources are
-released.
+- `help` shows all available commands with short description.
+- `pend` requests list of users with **pending messages** sent to the current user.
+- `hist # user` requests up to **10** last **history messages** with particular `user`.
+- `chat user` initiates chat with a (even non-existent) `user`. All sent messages
+  are stored in a storage with `pending` messages and stored in a history once
+  delivered to the target `user`. Once issued, both client and server sessions
+  proceed to the `chat` state.
+- `quit` exits the program, connection is closed on both sides and resources are
+  released.
 
 The example of communication could look as follows. Consider **u1** sends
 `text message` "Hi!" to **u2** and **u2** reads them later. Messages without
@@ -119,13 +114,12 @@ pend
 
 ## Chat
 
-Consider the user **u1** initiated chat **u1 -> u2**. `chat` state is treated
-differently than two previous states.
+`chat` mode is treated differently than two previous modes. Consider a chat
+from **u1** towards **u2**.
 
-Server sends any message appeared in pending messages from **u2** towards **u1**.
-Such messages could appear at any time. Client sends any message comming from
-user interface. Asynchronous message passing happens in both directions.
+Server sends any message appeared in `pending messages` from **u2** towards **u1**.
+Client sends any message coming from user interface to the server. Messages could
+appear at any time, asynchronous message passing happens in both directions.
 
-Once the `end-of-chat sequence` detected, both client and server go to `command`
-state. Retrieved, but not sent pending messages are stored returned back to
-pending storage, so that messages are not lost.
+Once the `end-of-chat sequence` detected, chat mode is exited and the user
+could issue commands again.
