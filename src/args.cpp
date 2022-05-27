@@ -19,6 +19,12 @@ auto ArgsParser::parse_specific(int argc, char **argv, int optc, const struct op
     while ((res = getopt_long(argc, argv, config.c_str(), optv, &idx)) >= 0) {
         for (int i = 0; i < optc; ++i) {
             if (optv[i].val == res) {
+
+                // check option without value
+                if (!optarg) {
+                    throw std::invalid_argument("Invalid input arguments, consult user manual.");
+                }
+
                 opts_[optv[i].name] = optarg;
                 break;
             }
