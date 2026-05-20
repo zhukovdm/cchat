@@ -1,15 +1,12 @@
-#include <cstring>
-#include <iostream>
-#include <sstream>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include "client_entity.hpp"
 #include "client_session.hpp"
 #include "utility.hpp"
+#include <arpa/inet.h>
+#include <iostream>
+#include <netinet/in.h>
+#include <sys/socket.h>
 
-
-auto Client::init(const ClientArgsParser& args) -> void
+auto Client::init(const ClientArgsParser &args) -> void
 {
     name_ = args.get_value("name");
 
@@ -20,11 +17,11 @@ auto Client::init(const ClientArgsParser& args) -> void
     sock_ = create_new_socket();
     allow_socket_reuse(*sock_);
 
-    sockaddr_in server_addr {
+    sockaddr_in server_addr{
         .sin_family = AF_INET,
         .sin_port = htons(parse_port(args.get_value("port"))),
         .sin_addr = in_addr{htonl(INADDR_ANY)},
-        .sin_zero = {  }
+        .sin_zero = {},
     };
 
     // try to convert host address into binary form
@@ -40,17 +37,8 @@ auto Client::init(const ClientArgsParser& args) -> void
     // unblock AFTER connect!
     set_socket_non_blocking(*sock_);
 
-    std::cout
-        << "Client has established connection as "
-        << name_
-        << " on socket "
-        << *sock_
-        << ", host "
-        << args.get_value("host")
-        << ", port "
-        << args.get_value("port")
-        << "."
-        << std::endl;
+    std::cout << "Client has established connection as " << name_ << " on socket " << *sock_ << ", host "
+              << args.get_value("host") << ", port " << args.get_value("port") << "." << std::endl;
 }
 
 auto Client::loop() -> void
@@ -61,7 +49,5 @@ auto Client::loop() -> void
 
 Client::~Client()
 {
-    std::cout
-        << "Client goes down..."
-        << std::endl;
+    std::cout << "Client goes down..." << std::endl;
 }

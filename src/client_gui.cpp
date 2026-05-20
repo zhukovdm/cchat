@@ -1,10 +1,9 @@
+#include "client_gui.hpp"
 #include <cstring>
 #include <iostream>
 #include <ncurses.h>
-#include "client_gui.hpp"
 
-
-Gui::Gui(Panel& panel, PendingDeque& send_stor, PendingDeque& recv_stor)
+Gui::Gui(Panel &panel, PendingDeque &send_stor, PendingDeque &recv_stor)
     : panel_(panel), buff_stor_(), send_stor_(send_stor), recv_stor_(recv_stor)
 {
 }
@@ -24,12 +23,14 @@ auto Gui::fetch_message() -> void
     }
 }
 
-auto Gui::draw_window(int rows, const char* buf) -> void
+auto Gui::draw_window(int rows, const char *buf) -> void
 {
     // clean up current display
     erase();
 
-    if (rows == 0) { /* do nothing */ }
+    if (rows == 0) {
+        /* do nothing */
+    }
 
     if (rows >= 2) {
         mvprintw(1, 0, "%s", panel_.load().c_str());
@@ -54,15 +55,13 @@ auto Gui::draw_window(int rows, const char* buf) -> void
     refresh();
 }
 
-auto Gui::loop(std::atomic_bool& done) -> void
+auto Gui::loop(std::atomic_bool &done) -> void
 {
     WINDOW *w;
 
     // init new terminal window
     if ((w = initscr()) == NULL) {
-        std::cout
-            << "Not possible to init new terminal window."
-            << std::endl;
+        std::cout << "Not possible to init new terminal window." << std::endl;
         done.store(true);
         return;
     }
